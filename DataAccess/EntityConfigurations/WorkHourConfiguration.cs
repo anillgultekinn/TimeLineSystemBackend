@@ -11,13 +11,13 @@ public class WorkHourConfiguration : IEntityTypeConfiguration<WorkHour>
         builder.ToTable("WorkHours").HasKey(w => w.Id);
 
         builder.Property(w => w.Id).HasColumnName("Id").IsRequired();
-        builder.Property(w => w.UserId).HasColumnName("UserId").IsRequired();
+        builder.Property(w => w.AccountId).HasColumnName("UserId").IsRequired();
         builder.Property(w => w.StartHour).HasColumnName("StartHour").IsRequired();
         builder.Property(w => w.EndHour).HasColumnName("EndHour").IsRequired();
         builder.Property(w => w.StudyDate).HasColumnName("StudyDate").IsRequired();
 
         builder.HasIndex(indexExpression: w => w.Id, name: "UK_Id").IsUnique();
-        builder.HasIndex(indexExpression: u => u.UserId, name: "UK_UserId").IsUnique();
+        builder.HasIndex(indexExpression: u => u.AccountId, name: "UK_AccountId").IsUnique();
 
 
         builder.HasQueryFilter(w => !w.DeletedDate.HasValue);

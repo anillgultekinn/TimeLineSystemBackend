@@ -14,12 +14,11 @@ public static class DataAccessServiceRegistration
         services.AddDbContext<TimeLineContext>(options => options.UseSqlServer(configuration.GetConnectionString("TimeLine")));
 
       
+        services.AddScoped<IAccountDal, EfAccountDal>();
+        services.AddScoped<IWorkHourDal, EfWorkHourDal>();
         services.AddScoped<IUserDal, EfUserDal>();
-       
-        services.AddScoped<IOperationClaimDal, EfOperationClaimDal>();
         services.AddScoped<IUserOperationClaimDal, EfUserOperationClaimDal>();
         services.AddScoped<IOperationClaimDal, EfOperationClaimDal>();
-        services.AddScoped<IWorkHourDal, EfWorkHourDal>();
 
         return services;
     }

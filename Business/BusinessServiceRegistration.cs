@@ -19,6 +19,7 @@ public static class BusinessServiceRegistration
         services.AddScoped<IAuthService, AuthManager>();
         services.AddScoped<ITokenHelper, JwtHelper>();
         services.AddScoped<IUserService, UserManager>();
+        services.AddScoped<IAccountService, AccountManager>();
         services.AddScoped<IOperationClaimService, OperationClaimManager>();
         services.AddScoped<IUserOperationClaimService, UserOperationClaimManager>();
         services.AddScoped<IWorkHourService, WorkHourManager>();

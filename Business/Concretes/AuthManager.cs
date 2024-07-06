@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Business.Abstracts;
+using Business.Dtos.Requests.AccountRequests;
 using Business.Dtos.Requests.AuthRequests;
 using Business.Dtos.Requests.MailRequests;
 using Business.Dtos.Requests.OperationClaimRequests;
@@ -26,11 +27,13 @@ public class AuthManager : IAuthService
     private IUserOperationClaimService _userOperationClaimService;
     private IOperationClaimService _operationClaimService;
     private IMailService _mailService;
+    IAccountService _accountService;
+
 
     private UserBusinessRules _userBusinessRules;
 
 
-    public AuthManager(IUserService userService, ITokenHelper tokenHelper, IMapper mapper, UserBusinessRules userBusinessRules,  IMailService mailService, IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService)
+    public AuthManager(IUserService userService, ITokenHelper tokenHelper, IMapper mapper, UserBusinessRules userBusinessRules, IMailService mailService, IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService, IAccountService accountService)
     {
         _userService = userService;
         _tokenHelper = tokenHelper;
@@ -39,6 +42,7 @@ public class AuthManager : IAuthService
         _mailService = mailService;
         _userOperationClaimService = userOperationClaimService;
         _operationClaimService = operationClaimService;
+        _accountService = accountService;
     }
 
     public async Task<LoginResponse> Register(RegisterAuthRequest registerAuthRequest, string password)
@@ -57,6 +61,12 @@ public class AuthManager : IAuthService
         var getUserResponse = await _userService.GetByIdAsync(addedUser.Id);
 
         User mappedUser = _mapper.Map<User>(getUserResponse);
+
+        await _accountService.AddAsync(new CreateAccountRequest
+        {
+            Id = addedUser.Id,
+            UserId = addedUser.Id,
+        });
 
         var operationClaim = await _operationClaimService.GetByRoleName(Roles.User);
         if (operationClaim == null)
@@ -78,7 +88,6 @@ public class AuthManager : IAuthService
         var result = await CreateAccessToken(mappedUser);
         return result;
     }
-
     public async Task<User> Login(LoginAuthRequest loginAuthRequest)
     {
         var user = await _userService.GetByMailAsync(loginAuthRequest.Email);

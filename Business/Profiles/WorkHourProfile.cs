@@ -21,5 +21,6 @@ public class WorkHourProfile : Profile
 
         CreateMap<IPaginate<WorkHour>, Paginate<GetListWorkHourResponse>>().ReverseMap();
         CreateMap<WorkHour, GetListWorkHourResponse>().ReverseMap();
+
     }
 }
