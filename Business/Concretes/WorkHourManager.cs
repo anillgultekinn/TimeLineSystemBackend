@@ -6,7 +6,6 @@ using Core.DataAccess.Paging;
 using DataAccess.Abstracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 
 namespace Busines.Concretes
 {
@@ -50,14 +49,14 @@ namespace Busines.Concretes
         }
 
         public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId)
-        {       
+        {
             var workHour = await _workHourDal.GetListAsync(
                 predicate: u => u.AccountId == accountId,
                 include: w => w.Include(w => w.Account),
                 enableTracking: false);
             var mappedWorkHour = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHour;
-        }             
+        }
 
         public async Task<IPaginate<GetListWorkHourResponse>> GetListAsync(PageRequest pageRequest)
         {
@@ -81,14 +80,25 @@ namespace Busines.Concretes
 
         public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month)
         {
-           var workHour = await _workHourDal.GetListAsync(
-                predicate: u => u.StudyDate.Month == month,
-                include: w => w.Include(w => w.Account),
-                enableTracking: false);
+            var workHour = await _workHourDal.GetListAsync(
+                 predicate: u => u.StudyDate.Month == month,
+                 include: w => w.Include(w => w.Account),
+                 enableTracking: false);
 
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHours;
 
+        }
+
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day)
+        {
+            var workHour = await _workHourDal.GetListAsync(
+               predicate: u => u.StudyDate.Month == month && u.StudyDate.Day == day,
+               include: w => w.Include(w => w.Account),
+               enableTracking: false);
+
+            var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
+            return mappedWorkHours;
         }
     }
 }
