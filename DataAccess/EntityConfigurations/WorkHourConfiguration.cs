@@ -17,7 +17,7 @@ public class WorkHourConfiguration : IEntityTypeConfiguration<WorkHour>
         builder.Property(w => w.StudyDate).HasColumnName("StudyDate").IsRequired();
 
         builder.HasIndex(indexExpression: w => w.Id, name: "UK_Id").IsUnique();
-        builder.HasIndex(indexExpression: u => u.AccountId, name: "UK_AccountId").IsUnique();
+        //builder.HasIndex(indexExpression: u => u.AccountId, name: "UK_AccountId").IsUnique();
 
         builder.HasOne(w => w.Account);
         builder.HasQueryFilter(w => !w.DeletedDate.HasValue);

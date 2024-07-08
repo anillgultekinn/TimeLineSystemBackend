@@ -14,6 +14,4 @@ public class Account : Entity<Guid>
     public User User { get; set; }
 
     public ICollection<WorkHour> WorkHours { get; set; }
-
-
 }

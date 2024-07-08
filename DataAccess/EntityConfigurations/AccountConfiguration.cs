@@ -23,6 +23,7 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
 
 
         builder.HasOne(a => a.User);
+        builder.HasMany(a => a.WorkHours);
 
         builder.HasQueryFilter(a => !a.DeletedDate.HasValue);
     }
