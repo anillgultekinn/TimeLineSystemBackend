@@ -40,6 +40,16 @@ public class WorkHoursController : ControllerBase
         return Ok(result);
     }
 
+    [Logging(typeof(MsSqlLogger))]
+    [Logging(typeof(FileLogger))]
+    [Cache]
+    [HttpGet("GetByAccountId")]
+    public async Task<IActionResult> GetByAccountIdAsync(Guid accountId)
+    {
+        var result = await _workHourService.GetByAccountIdAsync(accountId);
+        return Ok(result);
+    }
+
 
     [Logging(typeof(MsSqlLogger))]
     [Logging(typeof(FileLogger))]

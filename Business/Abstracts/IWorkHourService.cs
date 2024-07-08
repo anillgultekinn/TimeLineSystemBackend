@@ -11,5 +11,6 @@ public interface IWorkHourService
     Task<UpdatedWorkHourResponse> UpdateAsync(UpdateWorkHourRequest updateWorkHourRequest);
     Task<DeletedWorkHourResponse> DeleteAsync(Guid id);
     Task<GetWorkHourResponse> GetByIdAsync(Guid? id);
-    Task<GetListWorkHourResponse> GetByUserIdAsync(Guid? id);
-}
+    Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId);
+
+}   

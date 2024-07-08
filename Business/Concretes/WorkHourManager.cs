@@ -48,20 +48,18 @@ namespace Busines.Concretes
             return getWorkHourResponse;
         }
 
-        public async Task<GetListWorkHourResponse> GetByUserIdAsync(Guid? id)
-        {
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId)
+        {       
             var workHour = await _workHourDal.GetListAsync(
+                predicate: u => u.AccountId == accountId,
                 include: w => w.Include(w => w.Account),
-        predicate: u => u.Id == id,
-        enableTracking: false);
-
-            GetListWorkHourResponse getListWorkHourResponse = _mapper.Map<GetListWorkHourResponse>(workHour);
-            return getListWorkHourResponse;
-        }
+                enableTracking: false);
+            var mappedWorkHour = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
+            return mappedWorkHour;
+        }             
 
         public async Task<IPaginate<GetListWorkHourResponse>> GetListAsync(PageRequest pageRequest)
         {
-
             var workHour = await _workHourDal.GetListAsync(
             include: w => w.Include(w => w.Account),
             index: pageRequest.PageIndex,
@@ -71,7 +69,6 @@ namespace Busines.Concretes
             return mappedWorkHours;
 
         }
-      
 
         public async Task<UpdatedWorkHourResponse> UpdateAsync(UpdateWorkHourRequest updateWorkHourRequest)
         {
