@@ -6,6 +6,7 @@ using Core.DataAccess.Paging;
 using DataAccess.Abstracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace Busines.Concretes
 {
@@ -76,6 +77,18 @@ namespace Busines.Concretes
             WorkHour updatedWorkHour = await _workHourDal.AddAsync(workHour);
             UpdatedWorkHourResponse updatedWorkHourResponse = _mapper.Map<UpdatedWorkHourResponse>(updatedWorkHour);
             return updatedWorkHourResponse;
+        }
+
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month)
+        {
+           var workHour = await _workHourDal.GetListAsync(
+                predicate: u => u.StudyDate.Month == month,
+                include: w => w.Include(w => w.Account),
+                enableTracking: false);
+
+            var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
+            return mappedWorkHours;
+
         }
     }
 }

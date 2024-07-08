@@ -12,5 +12,5 @@ public interface IWorkHourService
     Task<DeletedWorkHourResponse> DeleteAsync(Guid id);
     Task<GetWorkHourResponse> GetByIdAsync(Guid? id);
     Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId);
-
-}   
+    Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month);
+}

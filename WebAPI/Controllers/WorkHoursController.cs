@@ -50,6 +50,16 @@ public class WorkHoursController : ControllerBase
         return Ok(result);
     }
 
+    [Logging(typeof(MsSqlLogger))]
+    [Logging(typeof(FileLogger))]
+    [Cache]
+    [HttpGet("GetByMonthAsync")]
+    public async Task<IActionResult> GetByMonthAsync(int month)
+    {
+        var result = await _workHourService.GetByMonthAsync(month);
+        return Ok(result);
+    }
+
 
     [Logging(typeof(MsSqlLogger))]
     [Logging(typeof(FileLogger))]
