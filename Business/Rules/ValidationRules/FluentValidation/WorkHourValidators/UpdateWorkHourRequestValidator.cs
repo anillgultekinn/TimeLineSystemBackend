@@ -7,7 +7,7 @@ public class UpdateWorkHourRequestValidator : AbstractValidator<UpdateWorkHourRe
 {
     public UpdateWorkHourRequestValidator()
     {
-        RuleFor(u => u.UserId).NotEmpty();
+        RuleFor(u => u.AccountId).NotEmpty();
         RuleFor(u => u.StartHour).NotEmpty();
         RuleFor(u => u.EndHour).NotEmpty();
         RuleFor(u => u.StudyDate).NotEmpty();

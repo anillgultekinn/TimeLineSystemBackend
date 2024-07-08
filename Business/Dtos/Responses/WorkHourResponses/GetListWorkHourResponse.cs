@@ -3,8 +3,8 @@
 public class GetListWorkHourResponse
 {
     public Guid Id { get; set; }
-    public Guid UserId { get; set; }
-    public DateTime StartHour { get; set; }
-    public DateTime EndHour { get; set; }
+    public Guid AccountId { get; set; }
+    public TimeSpan StartHour { get; set; }
+    public TimeSpan EndHour { get; set; }
     public DateTime StudyDate { get; set; }
 }

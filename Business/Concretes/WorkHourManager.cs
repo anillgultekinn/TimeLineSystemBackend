@@ -71,40 +71,7 @@ namespace Busines.Concretes
             return mappedWorkHours;
 
         }
-
-
-        public async Task<IPaginate<GetListWorkHourResponse>> GetListDateAsync(PageRequest pageRequest, int month, int year)
-        {
-            var startDate = new DateTime(year, month, 1);
-            var endDate = startDate.AddMonths(1).AddSeconds(-1);
-
-            var workHoursQuery = _workHourDal.Query()
-                .Include(w => w.Account) // Manuel olarak Include ekliyoruz
-                .Where(w => w.StudyDate >= startDate && w.StudyDate <= endDate);
-
-            var totalCount = await workHoursQuery.CountAsync(); // Toplam kayıt sayısını hesapla
-
-            var workHours = await workHoursQuery
-                .Skip(pageRequest.PageIndex * pageRequest.PageSize)
-                .Take(pageRequest.PageSize)
-                .ToListAsync();
-
-            var mappedWorkHours = _mapper.Map<List<GetListWorkHourResponse>>(workHours);
-
-            // IPaginate<GetListWorkHourResponse> türünde bir nesne oluştur
-            var paginatedResult = new Paginate<GetListWorkHourResponse>
-            {
-                Items = mappedWorkHours,
-                Index = pageRequest.PageIndex,
-                Size = pageRequest.PageSize,
-                Count = totalCount,
-                Pages = (int)Math.Ceiling(totalCount / (double)pageRequest.PageSize),
-                From = pageRequest.PageIndex * pageRequest.PageSize + 1,
-            };
-
-            return paginatedResult;
-        }
-
+      
 
         public async Task<UpdatedWorkHourResponse> UpdateAsync(UpdateWorkHourRequest updateWorkHourRequest)
         {
