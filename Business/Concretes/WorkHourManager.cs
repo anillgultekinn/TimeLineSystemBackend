@@ -2,6 +2,7 @@
 using Busines.Abstracts;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
+using Busines.Rules.BusinessRules;
 using Core.DataAccess.Paging;
 using DataAccess.Abstracts;
 using Entities;
@@ -13,15 +14,22 @@ namespace Busines.Concretes
     {
         IWorkHourDal _workHourDal;
         IMapper _mapper;
+        WorkHourBusinessRules _workHourBusinessRules;
 
-        public WorkHourManager(IWorkHourDal workHourDal, IMapper mapper)
+
+        public WorkHourManager(IWorkHourDal workHourDal, IMapper mapper, WorkHourBusinessRules workHourBusinessRules)
         {
             _workHourDal = workHourDal;
             _mapper = mapper;
+            _workHourBusinessRules = workHourBusinessRules;
         }
 
         public async Task<CreatedWorkHourResponse> AddAsync(CreateWorkHourRequest createWorkHourRequest)
         {
+
+            await _workHourBusinessRules.WorkHourCannotBeDuplicatedWhenInserted(
+       createWorkHourRequest.AccountId,
+       createWorkHourRequest.StudyDate);
             WorkHour workHour = _mapper.Map<WorkHour>(createWorkHourRequest);
             WorkHour createdWorkHour = await _workHourDal.AddAsync(workHour);
             CreatedWorkHourResponse createdWorkHourResponse = _mapper.Map<CreatedWorkHourResponse>(createdWorkHour);
@@ -30,6 +38,7 @@ namespace Busines.Concretes
 
         public async Task<DeletedWorkHourResponse> DeleteAsync(Guid id)
         {
+            await _workHourBusinessRules.IsExistsWorkHour(id);
             WorkHour workHour = await _workHourDal.GetAsync(predicate: u => u.Id == id);
             WorkHour deletedWorkHour = await _workHourDal.DeleteAsync(workHour);
             DeletedWorkHourResponse deletedWorkHourResponse = _mapper.Map<DeletedWorkHourResponse>(deletedWorkHour);
@@ -72,15 +81,19 @@ namespace Busines.Concretes
 
         public async Task<UpdatedWorkHourResponse> UpdateAsync(UpdateWorkHourRequest updateWorkHourRequest)
         {
+            await _workHourBusinessRules.IsExistsWorkHour(updateWorkHourRequest.Id);
+
             WorkHour workHour = _mapper.Map<WorkHour>(updateWorkHourRequest);
             WorkHour updatedWorkHour = await _workHourDal.AddAsync(workHour);
             UpdatedWorkHourResponse updatedWorkHourResponse = _mapper.Map<UpdatedWorkHourResponse>(updatedWorkHour);
             return updatedWorkHourResponse;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(PageRequest pageRequest, int month)
         {
             var workHour = await _workHourDal.GetListAsync(
+                    index: pageRequest.PageIndex,
+                 size: pageRequest.PageSize,
                  predicate: u => u.StudyDate.Month == month,
                  include: w => w.Include(w => w.Account),
                  enableTracking: false);
@@ -90,23 +103,27 @@ namespace Busines.Concretes
 
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(PageRequest pageRequest, int month, int day)
         {
             var workHour = await _workHourDal.GetListAsync(
-               predicate: u => u.StudyDate.Month == month && u.StudyDate.Day == day,
-               include: w => w.Include(w => w.Account),
-               enableTracking: false);
+                 index: pageRequest.PageIndex,
+                 size: pageRequest.PageSize,
+                 predicate: u => u.StudyDate.Month == month && u.StudyDate.Day == day,
+                 include: w => w.Include(w => w.Account),
+                 enableTracking: false);
 
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHours;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(Guid accountId, int month)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(PageRequest pageRequest, Guid accountId, int month)
         {
             var workHour = await _workHourDal.GetListAsync(
-             predicate: u => u.StudyDate.Month == month && u.AccountId == accountId,
-             include: w => w.Include(w => w.Account),
-             enableTracking: false);
+                 index: pageRequest.PageIndex,
+                 size: pageRequest.PageSize,
+                predicate: u => u.StudyDate.Month == month && u.AccountId == accountId,
+                include: w => w.Include(w => w.Account),
+                enableTracking: false);
 
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHours;

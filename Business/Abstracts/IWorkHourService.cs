@@ -12,7 +12,7 @@ public interface IWorkHourService
     Task<DeletedWorkHourResponse> DeleteAsync(Guid id);
     Task<GetWorkHourResponse> GetByIdAsync(Guid? id);
     Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId);
-    Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month);
-    Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day);
-    Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(Guid accountId, int month);
+    Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(PageRequest pageRequest, int month);
+    Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(PageRequest pageRequest, int month, int day);
+    Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(PageRequest pageRequest, Guid accountId, int month);
 }

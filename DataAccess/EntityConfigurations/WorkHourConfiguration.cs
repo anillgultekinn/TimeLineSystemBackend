@@ -19,7 +19,15 @@ public class WorkHourConfiguration : IEntityTypeConfiguration<WorkHour>
         builder.HasIndex(indexExpression: w => w.Id, name: "UK_Id").IsUnique();
         //builder.HasIndex(indexExpression: u => u.AccountId, name: "UK_AccountId").IsUnique();
 
-        builder.HasOne(w => w.Account);
+
+        builder.HasIndex(w => new { w.AccountId, w.StartHour, w.EndHour, w.StudyDate }, name: "UK_AccountId_StartHour_EndHour_StudyDate").IsUnique();
+
+        builder.HasOne(w => w.Account)
+               .WithMany(a => a.WorkHours)
+               .HasForeignKey(w => w.AccountId);
+
+
+        //builder.HasOne(w => w.Account);
         builder.HasQueryFilter(w => !w.DeletedDate.HasValue);
 
     }

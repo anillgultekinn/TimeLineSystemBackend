@@ -25,4 +25,17 @@ public class WorkHourBusinessRules : BaseBusinessRules
             throw new BusinessException(BusinessMessages.DataNotFound);
         }
     }
+
+    public async Task WorkHourCannotBeDuplicatedWhenInserted(Guid accountId, DateTime studyDate)
+    {
+        var result = await _workHourDal.GetAsync(
+            predicate: a => a.AccountId == accountId
+                && a.StudyDate.Date == studyDate.Date,
+            enableTracking: false);
+
+        if (result != null)
+        {
+            throw new BusinessException(BusinessMessages.DataAvailable);
+        }
+    }
 }
