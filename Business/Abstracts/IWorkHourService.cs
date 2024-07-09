@@ -14,4 +14,5 @@ public interface IWorkHourService
     Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId);
     Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month);
     Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day);
+    Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(Guid accountId, int month);
 }

@@ -71,6 +71,18 @@ public class WorkHoursController : ControllerBase
     }
 
 
+
+    [Logging(typeof(MsSqlLogger))]
+    [Logging(typeof(FileLogger))]
+    [Cache]
+    [HttpGet("GetByAccountIdAndMonthAsync")]
+    public async Task<IActionResult> GetByAccountIdAndMonthAsync(Guid accountId, int month)
+    {
+        var result = await _workHourService.GetByAccountIdAndMonthAsync(accountId, month);
+        return Ok(result);
+    }
+
+
     [Logging(typeof(MsSqlLogger))]
     [Logging(typeof(FileLogger))]
     [CacheRemove("WorkHours.Get")]
