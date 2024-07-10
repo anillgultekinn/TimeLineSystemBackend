@@ -3,6 +3,7 @@ using Busines.Abstracts;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
 using Busines.Rules.BusinessRules;
+using Core.DataAccess.Dynamic;
 using Core.DataAccess.Paging;
 using DataAccess.Abstracts;
 using Entities;
@@ -57,9 +58,11 @@ namespace Busines.Concretes
             return getWorkHourResponse;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAsync(Guid accountId, PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
+                 index: pageRequest.PageIndex,
+                  size: pageRequest.PageSize,
                 predicate: u => u.AccountId == accountId,
                 include: w => w.Include(w => w.Account),
                 enableTracking: false);
@@ -89,7 +92,7 @@ namespace Busines.Concretes
             return updatedWorkHourResponse;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(PageRequest pageRequest, int month)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month,PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
                     index: pageRequest.PageIndex,
@@ -103,7 +106,7 @@ namespace Busines.Concretes
 
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(PageRequest pageRequest, int month, int day)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day, PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
                  index: pageRequest.PageIndex,
@@ -116,7 +119,7 @@ namespace Busines.Concretes
             return mappedWorkHours;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(PageRequest pageRequest, Guid accountId, int month)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(Guid accountId, int month, PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
                  index: pageRequest.PageIndex,
@@ -128,5 +131,19 @@ namespace Busines.Concretes
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHours;
         }
+
+        public async Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(DynamicQuery dynamicQuery, PageRequest pageRequest)
+        {
+            var workHourDynamic = await _workHourDal.GetListByDynamicAsync(
+             dynamic: dynamicQuery,
+             include: w => w.Include(w => w.Account),
+             index: pageRequest.PageIndex,
+             size: pageRequest.PageSize,
+             enableTracking: false);
+            var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHourDynamic);
+            return mappedWorkHours;
+        }
+
+
     }
 }

@@ -3,6 +3,7 @@ using Busines.Dtos.Requests.WorkHourRequests;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging;
 using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
+using Core.DataAccess.Dynamic;
 using Core.DataAccess.Paging;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,18 @@ public class WorkHoursController : ControllerBase
         return Ok(result);
     }
 
+
+
+    [Logging(typeof(MsSqlLogger))]
+    [Logging(typeof(FileLogger))]
+    [Cache(60)]
+    [HttpPost("GetList/ByFiltered")]
+    public async Task<IActionResult> GetListByFiltered(DynamicQuery dynamicQuery, [FromQuery] PageRequest pageRequest)
+    {
+        var result = await _workHourService.GetListByFiltered(dynamicQuery, pageRequest);
+        return Ok(result);
+    }
+
     [Logging(typeof(MsSqlLogger))]
     [Logging(typeof(FileLogger))]
     [Cache]
@@ -44,9 +57,9 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [Cache]
     [HttpGet("GetByAccountId")]
-    public async Task<IActionResult> GetByAccountIdAsync(Guid accountId)
+    public async Task<IActionResult> GetByAccountIdAsync([FromQuery] Guid accountId, [FromQuery] PageRequest pageRequest)
     {
-        var result = await _workHourService.GetByAccountIdAsync(accountId);
+        var result = await _workHourService.GetByAccountIdAsync(accountId, pageRequest);
         return Ok(result);
     }
 
@@ -54,9 +67,9 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [Cache]
     [HttpGet("GetByMonthAsync")]
-    public async Task<IActionResult> GetByMonthAsync([FromQuery] PageRequest pageRequest, int month)
+    public async Task<IActionResult> GetByMonthAsync(int month, [FromQuery] PageRequest pageRequest)
     {
-        var result = await _workHourService.GetByMonthAsync(pageRequest, month);
+        var result = await _workHourService.GetByMonthAsync(month, pageRequest);
         return Ok(result);
     }
 
@@ -64,9 +77,9 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [Cache]
     [HttpGet("GetByMonthAndDayAsync")]
-    public async Task<IActionResult> GetByMonthAndDayAsync([FromQuery] PageRequest pageRequest, int month, int day)
+    public async Task<IActionResult> GetByMonthAndDayAsync(int month, int day, [FromQuery] PageRequest pageRequest)
     {
-        var result = await _workHourService.GetByMonthAndDayAsync(pageRequest, month, day);
+        var result = await _workHourService.GetByMonthAndDayAsync(month, day, pageRequest);
         return Ok(result);
     }
 
@@ -76,9 +89,9 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [Cache]
     [HttpGet("GetByAccountIdAndMonthAsync")]
-    public async Task<IActionResult> GetByAccountIdAndMonthAsync([FromQuery] PageRequest pageRequest, Guid accountId, int month)
+    public async Task<IActionResult> GetByAccountIdAndMonthAsync(Guid accountId, int month, [FromQuery] PageRequest pageRequest)
     {
-        var result = await _workHourService.GetByAccountIdAndMonthAsync(pageRequest, accountId, month);
+        var result = await _workHourService.GetByAccountIdAndMonthAsync(accountId, month, pageRequest);
         return Ok(result);
     }
 
