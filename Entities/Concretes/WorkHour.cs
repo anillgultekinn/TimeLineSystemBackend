@@ -6,8 +6,8 @@ namespace Entities;
 public class WorkHour : Entity<Guid>
 {
     public Guid AccountId{ get; set; }
-    public TimeSpan StartHour { get; set; } 
-    public TimeSpan EndHour { get; set; } 
+    public string StartHour { get; set; } 
+    public string EndHour { get; set; } 
     public DateTime StudyDate { get; set; } 
     public Account Account { get; set; }
 }
