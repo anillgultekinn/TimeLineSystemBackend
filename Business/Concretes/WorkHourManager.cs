@@ -64,7 +64,8 @@ namespace Busines.Concretes
                  index: pageRequest.PageIndex,
                   size: pageRequest.PageSize,
                 predicate: u => u.AccountId == accountId,
-                include: w => w.Include(w => w.Account),
+                include: w => w.Include(w => w.Account)
+                .ThenInclude(w=>w.User),
                 enableTracking: false);
             var mappedWorkHour = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHour;
@@ -73,7 +74,8 @@ namespace Busines.Concretes
         public async Task<IPaginate<GetListWorkHourResponse>> GetListAsync(PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
-            include: w => w.Include(w => w.Account),
+            include: w => w.Include(w => w.Account)
+            .ThenInclude(w => w.User),
             index: pageRequest.PageIndex,
             size: pageRequest.PageSize);
 

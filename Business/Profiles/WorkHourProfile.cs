@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
+using Business.Dtos.Responses.AccountResponses;
 using Core.DataAccess.Paging;
 using Entities;
 
@@ -22,6 +23,21 @@ public class WorkHourProfile : Profile
         CreateMap<IPaginate<WorkHour>, Paginate<GetListWorkHourResponse>>().ReverseMap();
         CreateMap<WorkHour, GetListWorkHourResponse>().ReverseMap();
 
-        CreateMap<WorkHour, GetWorkHourResponse>().ReverseMap();
+
+        CreateMap<WorkHour, GetListWorkHourResponse>()
+       .ForMember(destinationMember: response => response.FirstName,
+       memberOptions: a => a.MapFrom(a => a.Account.User.FirstName))
+         .ForMember(destinationMember: response => response.LastName,
+       memberOptions: a => a.MapFrom(a => a.Account.User.LastName))
+       .ForMember(destinationMember: response => response.Email,
+       memberOptions: a => a.MapFrom(a => a.Account.User.Email));
+
+        CreateMap<WorkHour, GetWorkHourResponse>()
+         .ForMember(destinationMember: response => response.FirstName,
+       memberOptions: a => a.MapFrom(a => a.Account.User.FirstName))
+         .ForMember(destinationMember: response => response.LastName,
+       memberOptions: a => a.MapFrom(a => a.Account.User.LastName))
+       .ForMember(destinationMember: response => response.Email,
+       memberOptions: a => a.MapFrom(a => a.Account.User.Email));
     }
 }
