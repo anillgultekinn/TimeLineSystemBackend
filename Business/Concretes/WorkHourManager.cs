@@ -3,11 +3,13 @@ using Busines.Abstracts;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
 using Busines.Rules.BusinessRules;
+using Business.Dtos.Requests.FilterRequests;
 using Core.DataAccess.Dynamic;
 using Core.DataAccess.Paging;
 using DataAccess.Abstracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Dynamic.Core;
 
 namespace Busines.Concretes
 {
@@ -64,9 +66,10 @@ namespace Busines.Concretes
                  index: pageRequest.PageIndex,
                   size: pageRequest.PageSize,
                 predicate: u => u.AccountId == accountId,
+                orderBy:u=>u.OrderByDescending(u=>u.StudyDate),
                 include: w => w.Include(w => w.Account)
                 .ThenInclude(w=>w.User),
-                enableTracking: false);
+                enableTracking: false);;
             var mappedWorkHour = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHour;
         }
@@ -76,6 +79,7 @@ namespace Busines.Concretes
             var workHour = await _workHourDal.GetListAsync(
             include: w => w.Include(w => w.Account)
             .ThenInclude(w => w.User),
+            orderBy:u => u.OrderByDescending(u => u.StudyDate),
             index: pageRequest.PageIndex,
             size: pageRequest.PageSize);
 
@@ -114,7 +118,8 @@ namespace Busines.Concretes
                  index: pageRequest.PageIndex,
                  size: pageRequest.PageSize,
                  predicate: u => u.StudyDate.Month == month && u.StudyDate.Day == day,
-                 include: w => w.Include(w => w.Account),
+                 include: w => w.Include(w => w.Account)
+                    .ThenInclude(w => w.User),
                  enableTracking: false);
 
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
@@ -127,25 +132,57 @@ namespace Busines.Concretes
                  index: pageRequest.PageIndex,
                  size: pageRequest.PageSize,
                 predicate: u => u.StudyDate.Month == month && u.AccountId == accountId,
-                include: w => w.Include(w => w.Account),
+                include: w => w.Include(w => w.Account)
+                   .ThenInclude(w => w.User),
                 enableTracking: false);
 
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHours;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(DynamicQuery dynamicQuery, PageRequest pageRequest)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetListByDynamic(DynamicQuery dynamicQuery, PageRequest pageRequest)
         {
             var workHourDynamic = await _workHourDal.GetListByDynamicAsync(
              dynamic: dynamicQuery,
-             include: w => w.Include(w => w.Account),
+             include: w => w.Include(w => w.Account)
+                .ThenInclude(w => w.User),
              index: pageRequest.PageIndex,
              size: pageRequest.PageSize,
              enableTracking: false);
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHourDynamic);
             return mappedWorkHours;
-        }
+        }        
 
+       
+        public async Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(WorkHourFilterRequest workHourFilterRequest, PageRequest pageRequest)
+        {
+            // Filtre koşullarını hazırlayın
+            bool filterByAccount = workHourFilterRequest.RequestingAccountId.ToString() != "-1";
+            bool filterByMonth = workHourFilterRequest.Month != "-1";
+
+            // Sorguyu oluşturun
+            var query = _workHourDal.Query();
+
+            if (filterByAccount)
+            {
+                query = query.Where(wh => wh.AccountId.ToString() == workHourFilterRequest.RequestingAccountId);
+            }
+
+            if (filterByMonth)
+            {
+                query = query.Where(wh => wh.StudyDate.Month.ToString() == workHourFilterRequest.Month);
+            }
+
+            // İlgili varlıkları dahil edin ve sorguyu çalıştırın
+            var workHourList = await query.OrderByDescending(u => u.StudyDate)
+                .Include(wh => wh.Account)
+                    .ThenInclude(a => a.User).ToPaginateAsync(pageRequest.PageIndex, pageRequest.PageSize);
+
+            
+            // Filtrelenmiş sonuçları mapleyin
+            var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHourList);
+            return mappedWorkHours;
+        }
 
     }
 }

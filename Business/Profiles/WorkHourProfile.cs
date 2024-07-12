@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
-using Business.Dtos.Responses.AccountResponses;
 using Core.DataAccess.Paging;
 using Entities;
 
@@ -20,8 +19,14 @@ public class WorkHourProfile : Profile
         CreateMap<WorkHour, DeletedWorkHourResponse>().ReverseMap();
 
 
+
         CreateMap<IPaginate<WorkHour>, Paginate<GetListWorkHourResponse>>().ReverseMap();
+
         CreateMap<WorkHour, GetListWorkHourResponse>().ReverseMap();
+
+        CreateMap<List<WorkHour>, Paginate<GetListWorkHourResponse>>()
+           .ForMember(destinationMember: p => p.Items,
+           memberOptions: opt => opt.MapFrom(p => p.ToList())).ReverseMap();
 
 
         CreateMap<WorkHour, GetListWorkHourResponse>()

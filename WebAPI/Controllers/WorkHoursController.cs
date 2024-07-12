@@ -1,5 +1,6 @@
 ﻿using Busines.Abstracts;
 using Busines.Dtos.Requests.WorkHourRequests;
+using Business.Dtos.Requests.FilterRequests;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging;
 using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
@@ -36,10 +37,20 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(MsSqlLogger))]
     [Logging(typeof(FileLogger))]
     [Cache(60)]
-    [HttpPost("GetList/ByFiltered")]
-    public async Task<IActionResult> GetListByFiltered(DynamicQuery dynamicQuery, [FromQuery] PageRequest pageRequest)
+    [HttpPost("GetListByDynamic")]
+    public async Task<IActionResult> GetListByDynamic(DynamicQuery dynamicQuery, [FromQuery] PageRequest pageRequest)
     {
-        var result = await _workHourService.GetListByFiltered(dynamicQuery, pageRequest);
+        var result = await _workHourService.GetListByDynamic(dynamicQuery, pageRequest);
+        return Ok(result);
+    }
+
+    [Logging(typeof(MsSqlLogger))]
+    [Logging(typeof(FileLogger))]
+    [Cache(60)]
+    [HttpPost("GetListByFiltered")]
+    public async Task<IActionResult> GetListByFiltered([FromBody] WorkHourFilterRequest workHourFilterRequest , [FromQuery] PageRequest pageRequest)
+    {
+        var result = await _workHourService.GetListByFiltered(workHourFilterRequest, pageRequest);
         return Ok(result);
     }
 

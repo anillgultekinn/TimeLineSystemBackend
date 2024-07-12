@@ -1,5 +1,6 @@
 ﻿using Busines.Dtos.Requests.WorkHourRequests;
 using Busines.Dtos.Responses.WorkHourResponse;
+using Business.Dtos.Requests.FilterRequests;
 using Core.DataAccess.Dynamic;
 using Core.DataAccess.Paging;
 
@@ -16,5 +17,6 @@ public interface IWorkHourService
     Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month, PageRequest pageRequest);
     Task<IPaginate<GetListWorkHourResponse>> GetByMonthAndDayAsync(int month, int day, PageRequest pageRequest);
     Task<IPaginate<GetListWorkHourResponse>> GetByAccountIdAndMonthAsync(Guid accountId, int month, PageRequest pageRequest);
-    Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(DynamicQuery dynamicQuery, PageRequest pageRequest);
+    Task<IPaginate<GetListWorkHourResponse>> GetListByDynamic(DynamicQuery dynamicQuery, PageRequest pageRequest);
+    Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(WorkHourFilterRequest workHourFilterRequest, PageRequest pageRequest);
 }
