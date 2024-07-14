@@ -4,7 +4,6 @@ using Business.Abstracts;
 using Business.Concrete;
 using Business.Concretes;
 using Core.Business.Rules;
-using Core.Utilities.Helpers;
 using Core.Utilities.Security.JWT;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -26,10 +25,7 @@ public static class BusinessServiceRegistration
 
 
         services.AddScoped<IOperationClaimService, OperationClaimManager>();
-        services.AddScoped<IFileHelper, FileHelper>();
    
-        services.AddScoped<IFileHelper, FileHelper>();
-        services.AddScoped<FileBusinessRules>();
         services.AddScoped<IMailService, MailManager>();
 
 

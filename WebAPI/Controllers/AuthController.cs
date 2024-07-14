@@ -1,6 +1,8 @@
-﻿using Business.Abstracts;
+﻿using Busines.Dtos.Requests.WorkHourRequests;
+using Business.Abstracts;
 using Business.Dtos.Requests.AuthRequests;
 using Business.Dtos.Requests.UserRequests;
+using Core.CrossCuttingConcerns.Validation;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -26,6 +28,8 @@ public class AuthController : Controller
     }
 
     [HttpPost("Register")]
+    [CustomValidation(typeof(RegisterAuthRequest))]
+
     public async Task<IActionResult> Register([FromBody] RegisterAuthRequest registerAuthRequest)
     {
         var registerResult = await _authService.Register(registerAuthRequest, registerAuthRequest.Password);

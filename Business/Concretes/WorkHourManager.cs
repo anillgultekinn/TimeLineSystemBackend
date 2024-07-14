@@ -66,10 +66,10 @@ namespace Busines.Concretes
                  index: pageRequest.PageIndex,
                   size: pageRequest.PageSize,
                 predicate: u => u.AccountId == accountId,
-                orderBy:u=>u.OrderByDescending(u=>u.StudyDate),
+                orderBy: u => u.OrderByDescending(u => u.StudyDate),
                 include: w => w.Include(w => w.Account)
-                .ThenInclude(w=>w.User),
-                enableTracking: false);;
+                .ThenInclude(w => w.User),
+                enableTracking: false); ;
             var mappedWorkHour = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHour);
             return mappedWorkHour;
         }
@@ -79,7 +79,7 @@ namespace Busines.Concretes
             var workHour = await _workHourDal.GetListAsync(
             include: w => w.Include(w => w.Account)
             .ThenInclude(w => w.User),
-            orderBy:u => u.OrderByDescending(u => u.StudyDate),
+            orderBy: u => u.OrderByDescending(u => u.StudyDate),
             index: pageRequest.PageIndex,
             size: pageRequest.PageSize);
 
@@ -93,12 +93,12 @@ namespace Busines.Concretes
             await _workHourBusinessRules.IsExistsWorkHour(updateWorkHourRequest.Id);
 
             WorkHour workHour = _mapper.Map<WorkHour>(updateWorkHourRequest);
-            WorkHour updatedWorkHour = await _workHourDal.AddAsync(workHour);
+            WorkHour updatedWorkHour = await _workHourDal.UpdateAsync(workHour);
             UpdatedWorkHourResponse updatedWorkHourResponse = _mapper.Map<UpdatedWorkHourResponse>(updatedWorkHour);
             return updatedWorkHourResponse;
         }
 
-        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month,PageRequest pageRequest)
+        public async Task<IPaginate<GetListWorkHourResponse>> GetByMonthAsync(int month, PageRequest pageRequest)
         {
             var workHour = await _workHourDal.GetListAsync(
                     index: pageRequest.PageIndex,
@@ -151,17 +151,21 @@ namespace Busines.Concretes
              enableTracking: false);
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHourDynamic);
             return mappedWorkHours;
-        }        
+        }
 
-       
+
         public async Task<IPaginate<GetListWorkHourResponse>> GetListByFiltered(WorkHourFilterRequest workHourFilterRequest, PageRequest pageRequest)
         {
             // Filtre koşullarını hazırlayın
             bool filterByAccount = workHourFilterRequest.RequestingAccountId.ToString() != "-1";
             bool filterByMonth = workHourFilterRequest.Month != "-1";
 
+            //filterByAccount: İstek yapılan hesap ID'si "-1" değilse true olur ve bu durumda hesap ID'sine göre filtreleme yapılacaktır.
+            //filterByMonth: İstek yapılan ay "-1" değilse true olur ve bu durumda aya göre filtreleme yapılacaktır.
+
             // Sorguyu oluşturun
-            var query = _workHourDal.Query();
+            IQueryable<WorkHour> query = _workHourDal.Query();
+
 
             if (filterByAccount)
             {
@@ -178,7 +182,7 @@ namespace Busines.Concretes
                 .Include(wh => wh.Account)
                     .ThenInclude(a => a.User).ToPaginateAsync(pageRequest.PageIndex, pageRequest.PageSize);
 
-            
+
             // Filtrelenmiş sonuçları mapleyin
             var mappedWorkHours = _mapper.Map<Paginate<GetListWorkHourResponse>>(workHourList);
             return mappedWorkHours;

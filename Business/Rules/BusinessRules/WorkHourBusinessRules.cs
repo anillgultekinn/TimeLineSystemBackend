@@ -37,4 +37,6 @@ public class WorkHourBusinessRules : BaseBusinessRules
             throw new BusinessException(BusinessMessages.DataAvailable);
         }
     }
+
+  
 }

@@ -1,9 +1,11 @@
 ﻿using Busines.Abstracts;
 using Busines.Dtos.Requests.WorkHourRequests;
 using Business.Dtos.Requests.FilterRequests;
+using Business.Rules.ValidationRules.FluentValidation.OperationClaimValidators;
 using Core.CrossCuttingConcerns.Caching;
 using Core.CrossCuttingConcerns.Logging;
 using Core.CrossCuttingConcerns.Logging.SeriLog.Logger;
+using Core.CrossCuttingConcerns.Validation;
 using Core.DataAccess.Dynamic;
 using Core.DataAccess.Paging;
 using Microsoft.AspNetCore.Mvc;
@@ -111,6 +113,8 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [CacheRemove("WorkHours.Get")]
     [HttpPost]
+    //[CustomValidation(typeof(CreateWorkHourRequest))]
+
     public async Task<IActionResult> AddAsync([FromBody] CreateWorkHourRequest createWorkHourRequest)
     {
         var result = await _workHourService.AddAsync(createWorkHourRequest);
@@ -122,6 +126,8 @@ public class WorkHoursController : ControllerBase
     [Logging(typeof(FileLogger))]
     [CacheRemove("WorkHours.Get")]
     [HttpPut]
+    [CustomValidation(typeof(UpdateWorkHourRequest))]
+
     public async Task<IActionResult> UpdateAsync([FromBody] UpdateWorkHourRequest updateWorkHourRequest)
     {
         var result = await _workHourService.UpdateAsync(updateWorkHourRequest);
