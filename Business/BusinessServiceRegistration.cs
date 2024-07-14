@@ -26,7 +26,6 @@ public static class BusinessServiceRegistration
 
         services.AddScoped<IOperationClaimService, OperationClaimManager>();
    
-        services.AddScoped<IMailService, MailManager>();
 
 
 

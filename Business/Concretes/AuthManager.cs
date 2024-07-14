@@ -2,7 +2,6 @@
 using Business.Abstracts;
 using Business.Dtos.Requests.AccountRequests;
 using Business.Dtos.Requests.AuthRequests;
-using Business.Dtos.Requests.MailRequests;
 using Business.Dtos.Requests.OperationClaimRequests;
 using Business.Dtos.Requests.UserOperationClaimRequests;
 using Business.Dtos.Requests.UserRequests;
@@ -26,20 +25,18 @@ public class AuthManager : IAuthService
     private IMapper _mapper;
     private IUserOperationClaimService _userOperationClaimService;
     private IOperationClaimService _operationClaimService;
-    private IMailService _mailService;
     IAccountService _accountService;
 
 
     private UserBusinessRules _userBusinessRules;
 
 
-    public AuthManager(IUserService userService, ITokenHelper tokenHelper, IMapper mapper, UserBusinessRules userBusinessRules, IMailService mailService, IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService, IAccountService accountService)
+    public AuthManager(IUserService userService, ITokenHelper tokenHelper, IMapper mapper, UserBusinessRules userBusinessRules, IUserOperationClaimService userOperationClaimService, IOperationClaimService operationClaimService, IAccountService accountService)
     {
         _userService = userService;
         _tokenHelper = tokenHelper;
         _mapper = mapper;
         _userBusinessRules = userBusinessRules;
-        _mailService = mailService;
         _userOperationClaimService = userOperationClaimService;
         _operationClaimService = operationClaimService;
         _accountService = accountService;
@@ -148,18 +145,12 @@ public class AuthManager : IAuthService
         byte[] tokenBytes = Encoding.UTF8.GetBytes(resetToken.Token);
         resetToken.Token = WebEncoders.Base64UrlEncode(tokenBytes);
 
-        SendPasswordResetMailRequest sendPasswordResetMailRequest = new SendPasswordResetMailRequest
-        {
-            UserId = user.Id,
-            ResetToken = resetToken.Token,
-            To = email
-        };
+        
 
         UpdateUserRequest updateUserRequest = _mapper.Map<UpdateUserRequest>(mappedUser);
         updateUserRequest.PasswordReset = resetToken.Token;
 
         await _userService.UpdateAsync(updateUserRequest);
-        await _mailService.SendPasswordResetMailAsync(sendPasswordResetMailRequest);
 
         return true;
     }
